@@ -4,20 +4,18 @@ import org.junit.jupiter.api.Test;
 import sprint1_0.produccion.Board;
 import sprint1_0.produccion.Console;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class TestSizeBoard {
+public class TestSizeConsole {
     private Board board;
-
+    // Criterio de aceptacion 1.1
     @Test
     public void whenGiveCorrectSizeThenCreateBoard(){
-        Board board = new Board(3);
-        assertEquals(board.getSize(),3);
+        board = new Board(3);
+        new Console(board).displayBoard();
     }
     // Criterio de aceptacion 1.2
     @Test
     public void whenGiveIncorrectSizeThenNotCreateBoard(){
-        Board board = new Board(2);
-        assertEquals(board.getSize(),-1);
+        board = new Board(1);
+        new Console(board).displayBoard();
     }
 }

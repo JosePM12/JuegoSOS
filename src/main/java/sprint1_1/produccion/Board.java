@@ -1,4 +1,4 @@
-package sprint1_0.produccion;
+package sprint1_1.produccion;
 
 public class Board {
     private int[][] grid = null;
@@ -24,8 +24,13 @@ public class Board {
             setSize(SIZE);
         }
     }
-    public int getCell(int row,int col) {
-        return grid[row][col];
+    public int getCell(int row,int col)
+    {
+        if(row>=0 && row<size && col>=0 && col<size){
+            return  grid[row][col];
+        } else {
+            return -1;
+        }
     }
 
     public char getPlayerturn(){

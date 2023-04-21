@@ -1,7 +1,7 @@
-package sprint1_0.produccion;
+package sprint1_1.produccion;
 
 public class Console {
-    private Board  board;
+    private Board board;
     public Console(Board board)
     {
         this.board = board;
