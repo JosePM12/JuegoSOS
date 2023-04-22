@@ -1,4 +1,4 @@
-package sprint1_1.produccion;
+package Sprint1.sprint1_1.produccion;
 
 public class Console {
     private Board board;

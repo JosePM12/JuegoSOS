@@ -1,8 +1,8 @@
-package sprint1_0.prueba;
+package Sprint1.sprint1_2.prueba;
 
+import Sprint1.sprint1_2.produccion.Board;
+import Sprint1.sprint1_2.produccion.Console;
 import org.junit.jupiter.api.Test;
-import sprint1_0.produccion.Board;
-import sprint1_0.produccion.Console;
 
 public class TestSizeConsole {
     private Board board;

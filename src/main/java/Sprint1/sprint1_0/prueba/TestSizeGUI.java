@@ -1,21 +1,23 @@
-package sprint1_1.prueba;
+package Sprint1.sprint1_0.prueba;
 
 import org.junit.jupiter.api.Test;
-
-import sprint1_1.produccion.Board;
-import sprint1_1.produccion.GUI;
+import Sprint1.sprint1_0.produccion.Board;
+import Sprint1.sprint1_0.produccion.GUI;
 
 public class TestSizeGUI {
+    private Board board;
     // Criterio de aceptacion 1.1
     @Test
     public void whenGiveCorrectSizeThenShowBoard(){
-        new GUI(new Board(3));
+        board = new Board(4);
+        new GUI(board);
         showGUI();
     }
     // Criterio de aceptacion 1.2
     @Test
     public void whenGiveIncorrectSizeThenNoShowBoard(){
-        new GUI(new Board(2));
+        board = new Board(2);
+        new GUI(board);
         showGUI();
     }
     public void showGUI(){

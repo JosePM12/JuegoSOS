@@ -1,4 +1,4 @@
-package sprint1_0.produccion;
+package Sprint1.sprint1_1.produccion;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -38,8 +38,33 @@ public class GUI {
     JLabel infoGame = new JLabel("Current turn: blue (or red)");
 
     public GUI(Board board) {
-        this.board =board;
 
+        initStaticGUI();
+
+        this.board = board;
+
+        if(board.getSize()>2)
+        {
+            GridLayout boardGrid = new GridLayout(board.getSize(),board.getSize());
+            boardGUI.setLayout(boardGrid);
+            for (int i=0;i<board.getSize()*board.getSize();i++)
+            {
+                JPanel BoardPiece = new JPanel();
+                BoardPiece.setBackground(Color.WHITE);
+                Border borde;
+                borde = BorderFactory.createLineBorder(Color.black);  ///se le pone un borde.
+                BoardPiece.setBorder(borde);
+                boardGUI.add(BoardPiece);
+            }
+            frame.add(boardGUI,BorderLayout.CENTER);
+        }
+
+
+
+        frame.setVisible(true);
+    }
+
+    public void initStaticGUI(){
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         frame.setSize(500, 500);
@@ -79,46 +104,23 @@ public class GUI {
         lettersRed.add(firstLetterRedPlayer);
         lettersRed.add(secondLetterRedPlayer);
 
-
-        if(board.getSize()>2)
-        {
-            GridLayout boardGrid = new GridLayout(board.getSize(),board.getSize());
-            boardGUI.setLayout(boardGrid);
-            for (int i=0;i<board.getSize()*board.getSize();i++)
-            {
-                JPanel BoardPiece = new JPanel();
-                BoardPiece.setBackground(Color.WHITE);
-                Border borde;
-                borde = BorderFactory.createLineBorder(Color.black);  ///se le pone un borde.
-                BoardPiece.setBorder(borde);
-                boardGUI.add(BoardPiece);
-            }
-        }
-
-
         footer.setLayout(new FlowLayout(FlowLayout.CENTER));
         footer.add(infoGame);
 
         frame.add(header, BorderLayout.NORTH);
         frame.add(bluePlayer,BorderLayout.WEST);
         frame.add(redPlayer,BorderLayout.EAST);
-        setContentPane();
-        frame.add(boardGUI,BorderLayout.CENTER);
         frame.add(footer,BorderLayout.SOUTH);
-        frame.setVisible(true);
     }
 
     public Board getBoard(){
         return board;
     }
 
-    private void setContentPane(){
-    }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new GUI(new Board(2));
+                new GUI(new Board(4));
             }
         });
     }

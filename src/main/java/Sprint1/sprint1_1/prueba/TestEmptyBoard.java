@@ -1,8 +1,8 @@
-package sprint1_1.prueba;
+package Sprint1.sprint1_1.prueba;
 
+import Sprint1.sprint1_1.produccion.Board;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import sprint1_1.produccion.Board;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

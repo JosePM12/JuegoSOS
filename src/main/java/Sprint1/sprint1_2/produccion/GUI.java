@@ -1,4 +1,4 @@
-package sprint1_1.produccion;
+package Sprint1.sprint1_2.produccion;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -32,38 +32,37 @@ public class GUI {
     JPanel boardGUI = new JPanel();
     private Board board;
 
-
+    private GameSOS gameSOS;
     JPanel footer = new JPanel();
 
     JLabel infoGame = new JLabel("Current turn: blue (or red)");
 
-    public GUI(Board board) {
-
+    public GUI() {
         initStaticGUI();
-
-        this.board = board;
-
-        if(board.getSize()>2)
-        {
-            GridLayout boardGrid = new GridLayout(board.getSize(),board.getSize());
-            boardGUI.setLayout(boardGrid);
-            for (int i=0;i<board.getSize()*board.getSize();i++)
-            {
-                JPanel BoardPiece = new JPanel();
-                BoardPiece.setBackground(Color.WHITE);
-                Border borde;
-                borde = BorderFactory.createLineBorder(Color.black);  ///se le pone un borde.
-                BoardPiece.setBorder(borde);
-                boardGUI.add(BoardPiece);
-            }
-            frame.add(boardGUI,BorderLayout.CENTER);
-        }
-
-
-
         frame.setVisible(true);
     }
 
+
+
+    public void initTableGUI(String size, GameSOS.MODE mode)
+    {
+        setSizeGUI(size);
+        this.board = new Board(Integer.parseInt(this.size.getText()));
+
+        gameSOS = new GameSOS(board);
+        selectModeGame(mode);
+        // Seleccionamos el JRadiosButton para generar el objeto de la clase GameSOS
+
+        if(modeGame1.isSelected() && board.getSize()>2){
+            gameSOS.setModeGame(GameSOS.MODE.SIMPLE);
+            createBoard();
+        } else if(modeGame2.isSelected() && board.getSize()>2) {
+            gameSOS.setModeGame(GameSOS.MODE.GENERAL);
+            createBoard();
+        } else {
+            JOptionPane.showMessageDialog(frame,"No se puede crear el tablero");
+        }
+    }
     public void initStaticGUI(){
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
@@ -113,6 +112,37 @@ public class GUI {
         frame.add(footer,BorderLayout.SOUTH);
     }
 
+    public void setSizeGUI(String s)
+    {
+        size.setText(s);
+    }
+
+    public void selectModeGame(GameSOS.MODE mode)
+    {
+        if(mode== GameSOS.MODE.SIMPLE) {
+            modeGame1.setSelected(true);
+        } else if(mode== GameSOS.MODE.GENERAL){
+            modeGame2.setSelected(true);
+        }
+    }
+    public void createBoard(){
+        if(board.getSize()>2)
+        {
+            GridLayout boardGrid = new GridLayout(board.getSize(),board.getSize());
+            boardGUI.setLayout(boardGrid);
+            for (int i=0;i<board.getSize()*board.getSize();i++)
+            {
+                JPanel BoardPiece = new JPanel();
+                BoardPiece.setBackground(Color.WHITE);
+                Border borde;
+                borde = BorderFactory.createLineBorder(Color.black);  ///se le pone un borde.
+                BoardPiece.setBorder(borde);
+                boardGUI.add(BoardPiece);
+            }
+            frame.add(boardGUI,BorderLayout.CENTER);
+        }
+    }
+
     public Board getBoard(){
         return board;
     }
@@ -120,7 +150,7 @@ public class GUI {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new GUI(new Board(4));
+                new GUI();
             }
         });
     }

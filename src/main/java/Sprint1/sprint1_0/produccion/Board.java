@@ -1,4 +1,4 @@
-package sprint1_0.produccion;
+package Sprint1.sprint1_0.produccion;
 
 public class Board {
     private int[][] grid = null;
