@@ -1,6 +1,5 @@
-package Sprint1.sprint1_2.produccion;
+package Sprint1.sprint1_4.produccion;
 
-import java.lang.String;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
