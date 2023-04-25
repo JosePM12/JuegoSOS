@@ -9,6 +9,12 @@ public class Board {
         DRAW,
     }
 
+    public enum MODE{
+        NONE,
+        SIMPLE,
+        GENERAL
+    }
+
     public enum LETTER{
         S,
         O
@@ -19,7 +25,7 @@ public class Board {
         RED_O,
         BLUE_S,
         BLUE_O,
-        EMPTY
+        EMPTY,
     }
 
     public enum COLOR{
@@ -29,6 +35,7 @@ public class Board {
 
     private CELL[][] grid;
     // Turno de la letra a colocar S u O
+    private MODE modeGame = MODE.NONE;
     private LETTER letterTurn;
     private COLOR colorPlayer;
     private GameState currentGameState;
@@ -47,11 +54,20 @@ public class Board {
     public COLOR getColorPlayer(){
         return colorPlayer;
     }
-    public Board(int SIZE){
+    public void setModeGame(MODE mode)
+    {
+        this.modeGame = mode;
+    }
+    public MODE getModeGame()
+    {
+        return this.modeGame;
+    }
+    public Board(int SIZE,MODE mode){
         if(SIZE<=2) {
             setSize(-1);
         } else {
             grid = new CELL[SIZE][SIZE];
+            setModeGame(mode);
             setSize(SIZE);
             initBoard();
         }
@@ -239,10 +255,42 @@ public class Board {
         return false;
     }
 
-    // Metodods para el modo de juego generql
+    public void normalMove(int row, int column, LETTER letter){
+        if (row >= 0 && row < size && column >= 0 && column < size
+                &&  grid[row][column] == Board.CELL.EMPTY)
+        {
+            this.letterTurn = letter;
+            if(colorPlayer== COLOR.BLUE) {
+                if (letterTurn == LETTER.S)
+                    grid[row][column] = CELL.BLUE_S;
+                else
+                    grid[row][column] = CELL.BLUE_O;
+            } else if (colorPlayer== COLOR.RED) {
+                if(letterTurn == LETTER.S) {
+                    grid[row][column] = CELL.RED_S;
+                } else {
+                    grid[row][column] = CELL.RED_O;
+                }
+            }
+        }
+    }
 
+    // Metodods para el modo de juego general
     public void generalMove(int row,int column,LETTER letter){
-
+        if(letter == LETTER.O)
+        {
+            if(formSOSwith0(colorPlayer,row,column)){
+                normalMove(row,column,letter);
+            } else {
+                simpleMove(row,column,letter);
+            }
+        } else {
+            if(formSOSwithS(colorPlayer,row,column)){
+                normalMove(row,column,letter);
+            } else {
+                simpleMove(row,column,letter);
+            }
+        }
     }
     public GameState getCurrentGameState() {
         return currentGameState;

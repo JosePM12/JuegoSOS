@@ -3,9 +3,27 @@ package Sprint3.sprint3_3.produccion;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-public class GUI {
+public class GUI extends JFrame {
     JFrame frame = new JFrame();
+
+    // Medidas para el board
+    public static int CELL_SIZE = 330;
+    public static int GRID_WIDTH = 3;
+    public static int GRID_WIDHT_HALF = GRID_WIDTH / 2;
+
+    public static int CELL_PADDING = CELL_SIZE / 6;
+    public static int SYMBOL_STROKE_WIDTH = 8;
+
+    private int CANVAS_WIDTH;
+    private int CANVAS_HEIGHT;
+
+    private GameBoardCanvas gameBoardCanvas;
+    private JLabel gameStatusBar;
     // Header del frame
     JPanel header =new JPanel();
     // Componenetes de header
@@ -29,39 +47,54 @@ public class GUI {
     BoxLayout blueGrid = new BoxLayout(bluePlayer,BoxLayout.Y_AXIS);
     BoxLayout redGrid = new BoxLayout(redPlayer,BoxLayout.Y_AXIS);
     // Crear el tablero
-    JPanel boardGUI = new JPanel();
     private Board board;
-
-    private GameSOS gameSOS;
+    // Parte inferior
     JPanel footer = new JPanel();
+    JButton newGame = new JButton("New Game");
 
-    JLabel infoGame = new JLabel("Current turn: blue (or red)");
+    Board.MODE modeGame = Board.MODE.NONE;
+    String sizeGame = "0";
 
-    public GUI() {
+    public GUI(Board prBord) {
         initStaticGUI();
+        // Usar el boton
+
+        initTableGUI(prBord);
+        newGame.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sizeGame = size.getText();
+                Board exBoard;
+                if(modeGame1.isSelected()){
+                    modeGame = Board.MODE.SIMPLE;
+                    exBoard = new Board(Integer.parseInt(sizeGame),modeGame);
+                    initTableGUI(exBoard);
+                    setSizeGUI(sizeGame);
+                    newGame.setEnabled(false);
+                    frame.setVisible(true);;
+
+                } else if (modeGame2.isSelected()) {
+                    modeGame = Board.MODE.GENERAL;
+                    exBoard = new Board(Integer.parseInt(sizeGame),modeGame);
+                    initTableGUI(exBoard);
+                    setSizeGUI(sizeGame);
+                    newGame.setEnabled(false);
+                    frame.setVisible(true);;
+                } else {
+                    JOptionPane.showMessageDialog(frame,"No se puede crear el tablero");
+                }
+            }
+        });
         frame.setVisible(true);
     }
 
 
-
-    public void initTableGUI(String size, GameSOS.MODE mode)
+    public void initTableGUI(Board exBoard)
     {
-        setSizeGUI(size);
-        this.board = new Board(Integer.parseInt(this.size.getText()));
-
-        gameSOS = new GameSOS(board);
-        selectModeGame(mode);
+        this.board = exBoard;
         // Seleccionamos el JRadiosButton para generar el objeto de la clase GameSOS
+        createBoard();
 
-        if(modeGame1.isSelected() && board.getSize()>2){
-            gameSOS.setModeGame(GameSOS.MODE.SIMPLE);
-            createBoard();
-        } else if(modeGame2.isSelected() && board.getSize()>2) {
-            gameSOS.setModeGame(GameSOS.MODE.GENERAL);
-            createBoard();
-        } else {
-            JOptionPane.showMessageDialog(frame,"No se puede crear el tablero");
-        }
     }
     public void initStaticGUI(){
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -103,8 +136,12 @@ public class GUI {
         lettersRed.add(firstLetterRedPlayer);
         lettersRed.add(secondLetterRedPlayer);
 
-        footer.setLayout(new FlowLayout(FlowLayout.CENTER));
-        footer.add(infoGame);
+        footer.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        gameStatusBar = new JLabel("  ");
+        gameStatusBar.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 15));
+        gameStatusBar.setBorder(BorderFactory.createEmptyBorder(2, 5, 4, 5));
+        footer.add(gameStatusBar);
+        footer.add(newGame);
 
         frame.add(header, BorderLayout.NORTH);
         frame.add(bluePlayer,BorderLayout.WEST);
@@ -117,40 +154,122 @@ public class GUI {
         size.setText(s);
     }
 
-    public void selectModeGame(GameSOS.MODE mode)
-    {
-        if(mode== GameSOS.MODE.SIMPLE) {
-            modeGame1.setSelected(true);
-        } else if(mode== GameSOS.MODE.GENERAL){
-            modeGame2.setSelected(true);
-        }
-    }
     public void createBoard(){
         if(board.getSize()>2)
         {
-            GridLayout boardGrid = new GridLayout(board.getSize(),board.getSize());
-            boardGUI.setLayout(boardGrid);
-            for (int i=0;i<board.getSize()*board.getSize();i++)
-            {
-                JPanel BoardPiece = new JPanel();
-                BoardPiece.setBackground(Color.WHITE);
-                Border borde;
-                borde = BorderFactory.createLineBorder(Color.black);  ///se le pone un borde.
-                BoardPiece.setBorder(borde);
-                boardGUI.add(BoardPiece);
-            }
-            frame.add(boardGUI,BorderLayout.CENTER);
+            CELL_SIZE /= board.getSize();
+            gameBoardCanvas = new GameBoardCanvas();
+            CANVAS_WIDTH = CELL_SIZE * board.getSize();
+            CANVAS_HEIGHT = (CELL_SIZE)* board.getSize() ;
+            gameBoardCanvas.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
+            Container boardPanel = getContentPane();
+            boardPanel.setLayout(new BorderLayout());
+            boardPanel.add(gameBoardCanvas, BorderLayout.CENTER);
+            frame.add(boardPanel,BorderLayout.CENTER);
         }
     }
-
     public Board getBoard(){
         return board;
+    }
+
+    class GameBoardCanvas extends  JPanel{
+        GameBoardCanvas() {
+            addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if (board.getCurrentGameState() == Board.GameState.PLAYING) {
+                        int rowSelected = e.getY() / CELL_SIZE;
+                        int colSelected = e.getX() / CELL_SIZE;
+                        if(board.getModeGame()== Board.MODE.SIMPLE)
+                            board.simpleMove(rowSelected, colSelected,board.getLetterTurn());
+                        else if (board.getModeGame() == Board.MODE.GENERAL) {
+                            board.generalMove(rowSelected,colSelected,board.getLetterTurn());
+                        }
+                    } else {
+                        board.initBoard();
+                    }
+                    repaint();
+                }
+            });
+        }
+        @Override
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            setBackground(Color.WHITE);
+            drawGridLines(g);
+            drawBoard(g);
+
+            printStatusBar();
+        }
+        private void drawGridLines(Graphics g) {
+            g.setColor(Color.BLACK);
+            g.fillRoundRect(0,0,CANVAS_WIDTH-1,GRID_WIDTH,GRID_WIDTH,GRID_WIDTH);
+            g.fillRoundRect(0, 0,
+                    GRID_WIDTH, CANVAS_HEIGHT - 1, GRID_WIDTH, GRID_WIDTH);
+            for (int row = 1; row < board.getSize(); ++row) {
+                g.fillRoundRect(0, CELL_SIZE * row - GRID_WIDHT_HALF,
+                        CANVAS_WIDTH - 1, GRID_WIDTH, GRID_WIDTH, GRID_WIDTH);
+            }
+            for (int col = 1; col < board.getSize(); ++col) {
+                g.fillRoundRect(CELL_SIZE * col - GRID_WIDHT_HALF, 0,
+                        GRID_WIDTH, CANVAS_HEIGHT - 1, GRID_WIDTH, GRID_WIDTH);
+            }
+            g.fillRoundRect(0,CELL_SIZE*board.getSize(),CANVAS_WIDTH-1,GRID_WIDTH,GRID_WIDTH,GRID_WIDTH);
+            g.fillRoundRect(CELL_SIZE*board.getSize(), 0,
+                    GRID_WIDTH, CANVAS_HEIGHT - 1, GRID_WIDTH, GRID_WIDTH);
+
+        }
+
+        private void drawBoard(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setFont(new Font("Arial",Font.BOLD,24));
+            g2d.setStroke(new BasicStroke(SYMBOL_STROKE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            for (int row = 0; row < board.getSize(); ++row) {
+                for (int col = 0; col < board.getSize(); ++col) {
+                    int x1 = col * CELL_SIZE + (CELL_SIZE/2);
+                    int y1 = row * CELL_SIZE + (CELL_SIZE/2);
+                    if (board.getCell(row, col) == Board.CELL.RED_S) {
+                        g2d.setColor(Color.RED);
+                        g2d.drawString("S",x1,y1);
+                    } else if (board.getCell(row, col) == Board.CELL.BLUE_S) {
+                        g2d.setColor(Color.BLUE);
+                        g2d.drawString("S",x1,y1);
+                    } else if (board.getCell(row,col) == Board.CELL.RED_O) {
+                        g2d.setColor(Color.RED);
+                        g2d.drawString("O",x1,y1);
+                    } else if (board.getCell(row,col)==Board.CELL.BLUE_O){
+                        g2d.setColor(Color.BLUE);
+                        g2d.drawString("O",x1,y1);
+                    }
+                }
+            }
+        }
+
+        private void printStatusBar() {
+            if (board.getCurrentGameState() == Board.GameState.PLAYING) {
+                gameStatusBar.setForeground(Color.BLACK);
+                if (board.getColorPlayer() == Board.COLOR.BLUE) {
+                    gameStatusBar.setText("Turno del Jugador Azul'");
+                } else {
+                    gameStatusBar.setText("Turno del Jugador Rojo");
+                }
+            } else if (board.getCurrentGameState() == Board.GameState.DRAW) {
+                gameStatusBar.setForeground(Color.RED);
+                gameStatusBar.setText("Empate!");
+            } else if (board.getCurrentGameState() == Board.GameState.BLUE_WON) {
+                gameStatusBar.setForeground(Color.BLUE);
+                gameStatusBar.setText("Jugador Azul Gana!");
+            } else if (board.getCurrentGameState() == Board.GameState.RED_WON) {
+                gameStatusBar.setForeground(Color.RED);
+                gameStatusBar.setText("Jugador Rojo Gana gana!");
+            }
+        }
+
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new GUI();
+                new GUI(new Board(4, Board.MODE.SIMPLE));
             }
         });
     }

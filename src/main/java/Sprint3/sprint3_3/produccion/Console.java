@@ -19,6 +19,6 @@ public class Console {
         System.out.println("-------");
     }
     public static void main(String[] args) {
-        new Console(new Board(2)).displayBoard();;
+        new Console(new Board(2, Board.MODE.SIMPLE)).displayBoard();;
     }
 }

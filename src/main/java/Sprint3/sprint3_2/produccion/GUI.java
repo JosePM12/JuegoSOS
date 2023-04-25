@@ -43,8 +43,6 @@ public class GUI {
         frame.setVisible(true);
     }
 
-
-
     public void initTableGUI(String size, GameSOS.MODE mode)
     {
         setSizeGUI(size);

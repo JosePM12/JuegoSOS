@@ -1,32 +1,27 @@
 package Sprint3.sprint3_3.prueba;
 
-import Sprint3.sprint3_1.produccion.Board;
-import Sprint3.sprint3_1.produccion.GameSOS;
-import Sprint3.sprint3_1.produccion.GameSOS.MODE;
+import Sprint3.sprint3_3.produccion.Board;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestGameSOS {
-    private GameSOS gameSOS;
-    @BeforeEach
-    public void setUp() throws Exception{
-        gameSOS = new GameSOS(new Board(4));
-    }
+    private Board board;
     // Criterio de Aceptacion 2.1
     @Test
     public void whenSelectFirstModeGameThenConfirmMode(){
-        gameSOS.setModeGame(MODE.SIMPLE);
-        assertEquals(gameSOS.getModeGame(), MODE.SIMPLE);
+        board = new Board(4, Board.MODE.SIMPLE);
+        assertEquals(board.getModeGame(), Board.MODE.SIMPLE);
     }
     @Test
     public void whenSelectSecondModeGameThenConfirmMode(){
-        gameSOS.setModeGame(MODE.GENERAL);
-        assertEquals(gameSOS.getModeGame(), MODE.GENERAL);
+        board = new Board(4, Board.MODE.GENERAL);
+        assertEquals(board.getModeGame(), Board.MODE.GENERAL);
     }
     // Criterio de Aceptacion 2.2
     @Test void whenNotSelectAnyModeGamethenNotMode(){
-        assertEquals(gameSOS.getModeGame(),MODE.NONE);
+        board = new Board(4, Board.MODE.NONE);
+        assertEquals(board.getModeGame(),Board.MODE.NONE);
     }
 }
